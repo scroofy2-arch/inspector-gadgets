@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seeking Tools — Hybrid AI Investigation Workbench</title>
+  <meta
+    name="description"
+    content="Question every narrative. Quick checks run on-device with Gemini Nano; deeper synthesis runs in the cloud with Gemini Flash. The app always names which path ran."
+  />
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Seeking Tools</h1>
+      <p class="tagline">Question everything. Look at what is <em>not</em> said.</p>
+    </div>
+    <div id="status-pill" class="status-pill status-unknown" title="Model status">
+      Checking…
+    </div>
+  </header>
+
+  <main>
+    <!-- Shown only when no Firebase config is present (see src/firebaseConfig.js). -->
+    <section id="setup-banner" class="setup-banner" hidden>
+      <h2>Setup needed</h2>
+      <p>
+        No Firebase web config was found. Copy <code>.env.example</code> to
+        <code>.env.local</code> and fill in your Firebase project's web config
+        (see <code>README.md</code>), then restart the dev server. Nothing here
+        will call any AI until the config is present.
+      </p>
+    </section>
+
+    <section class="panel input-panel">
+      <label for="source-text">Paste the text to investigate</label>
+      <p class="hint">
+        A claim, a news story, a corporate statement, a press release — anything
+        handed to you as a narrative.
+      </p>
+      <textarea
+        id="source-text"
+        rows="8"
+        maxlength="20000"
+        placeholder="Paste the text here…"
+      ></textarea>
+      <div class="input-meta">
+        <span id="char-count">0 characters</span>
+        <span id="length-note" class="length-note" hidden>
+          Over 5,000 characters — this will run in the cloud (on-device Gemini
+          Nano's context is about 9,216 tokens).
+        </span>
+      </div>
+
+      <fieldset class="tools">
+        <legend>Choose a tool</legend>
+        <div class="tool-grid" id="tool-grid">
+          <button type="button" class="tool-card selected" data-tool="silence-listener">
+            <strong>Silence Listener</strong>
+            <span>What is NOT said? What is missing?</span>
+            <em class="route route-local">Quick check · on-device first</em>
+          </button>
+          <button type="button" class="tool-card" data-tool="omission-reading">
+            <strong>Omission Reading</strong>
+            <span>Claims vs. evidence gaps.</span>
+            <em class="route route-local">Quick check · on-device first</em>
+          </button>
+          <button type="button" class="tool-card" data-tool="damage-control">
+            <strong>Damage-Control Reader</strong>
+            <span>Deflection, minimization, framing.</span>
+            <em class="route route-cloud">Deep synthesis · cloud first</em>
+          </button>
+          <button type="button" class="tool-card" data-tool="question-everything">
+            <strong>Question Everything</strong>
+            <span>The hard questions the narrative does not answer.</span>
+            <em class="route route-cloud">Deep synthesis · cloud first</em>
+          </button>
+        </div>
+      </fieldset>
+
+      <label class="private-toggle">
+        <input type="checkbox" id="private-only" />
+        <span>
+          <strong>Private only</strong> — never send this text to the cloud.
+          Runs on-device only (Gemini Nano); fails honestly if the device model
+          is unavailable.
+        </span>
+      </label>
+
+      <button type="button" id="run-btn" class="run-btn">Run analysis</button>
+
+      <div id="model-progress" class="model-progress" hidden>
+        <span id="model-progress-label">Preparing on-device model…</span>
+        <div class="progress-track"><div id="model-progress-bar" class="progress-bar"></div></div>
+      </div>
+      <p id="run-error" class="error" hidden></p>
+    </section>
+
+    <section id="results" class="panel results-panel" hidden>
+      <div class="results-head">
+        <h2 id="results-title">Analysis</h2>
+        <!-- The path badge is the point of the app: it always names the path that ran. -->
+        <span id="path-badge" class="path-badge">—</span>
+      </div>
+      <p id="path-note" class="path-note"></p>
+      <p id="result-summary" class="result-summary"></p>
+      <div id="findings" class="findings"></div>
+      <div id="questions-block" hidden>
+        <h3>Questions the narrative does not answer</h3>
+        <ol id="questions-list"></ol>
+      </div>
+      <details class="raw-json">
+        <summary>Raw JSON response</summary>
+        <pre id="raw-json"></pre>
+      </details>
+    </section>
+
+    <section class="panel log-panel">
+      <div class="log-head">
+        <h2>Findings log</h2>
+        <button type="button" id="clear-log" class="small-btn">Clear log</button>
+      </div>
+      <p class="hint">
+        Kept only in this browser (localStorage). Nothing is uploaded.
+      </p>
+      <ul id="findings-log" class="findings-log"></ul>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      Built for #BuildHybridAI 2026. All AI inference runs through Firebase AI
+      Logic — Gemini Nano on-device, Gemini Flash in the cloud. No other model
+      APIs are called. The app always shows which path ran.
+    </p>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
