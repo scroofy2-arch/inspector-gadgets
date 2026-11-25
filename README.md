@@ -3,6 +3,9 @@
 Entry for Google's **#BuildHybridAI 2026** hackathon (Devpost).
 Deadline: **Monday, November 30, 2026, 5:00 PM EST**.
 
+**Live demo:** https://seeking-tools.web.app
+**Demo video:** (YouTube link to be added — video file ready, 69 seconds)
+
 ## What it is
 
 An investigation workbench for questioning narratives. Paste a claim, a news
@@ -113,12 +116,20 @@ notes on-device only. Seeking Tools follows the same pattern.
 | `src/main.js` | UI wiring, result cards, path badge, localStorage findings log |
 | `.env.example` | Config variable names (copy to `.env.local`) |
 
-## Status / not yet verified
+## Status / verified
 
-- The code is syntax-checked and builds with Vite, but **live inference has
-  not been run**: it needs a real Firebase project config (being created
-  separately) and Desktop Chrome 139+ with the Prompt API flag for the
-  on-device path.
+- **Cloud inference verified live** (Nov 24, 2026): Damage-Control Reader and
+  Silence Listener both ran end-to-end on the deployed app and returned full
+  structured results with the `IN-CLOUD · Gemini Flash` badge; no App Check
+  or Firebase errors. Deployed on Firebase Hosting at
+  https://seeking-tools.web.app.
+- **On-device path not yet verified in a real browser:** the cloud browsers
+  used for testing report "On-device unavailable — cloud only" (the Prompt
+  API flag cannot be enabled there). The code is in place
+  (`PREFER_ON_DEVICE` / `ONLY_ON_DEVICE`, `initializeDeviceModel` on the Run
+  click); it needs Desktop Chrome 139+ with the Prompt API flag enabled and
+  the Gemini Nano model downloaded. "Private only" fails honestly when Nano
+  is unavailable, as designed.
 - `inferenceSource` values are documented as `ON_DEVICE` / `IN_CLOUD`; the
   code normalizes case defensively.
 - No auth and no database in v1 (localStorage only). App Check is wired for
